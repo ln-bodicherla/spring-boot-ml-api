@@ -1,0 +1,66 @@
+server:
+  port: 8080
+  tomcat:
+    threads:
+      max: 200
+      min-spare: 10
+    accept-count: 100
+  shutdown: graceful
+
+spring:
+  application:
+    name: ml-api
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+
+model:
+  path: "models/fraud_model.onnx"
+  version: "1.0.0"
+  name: "fraud-detection"
+  warmup-samples: 10
+  input-size: 10
+  num-threads: 4
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      modelService:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        minimumNumberOfCalls: 5
+        eventConsumerBufferSize: 10
+  retry:
+    instances:
+      modelService:
+        maxAttempts: 3
+        waitDuration: 500ms
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+
+logging:
+  level:
+    com.portfolio.mlapi: INFO
+    ai.onnxruntime: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
