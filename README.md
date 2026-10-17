@@ -1,6 +1,6 @@
 # Spring Boot ML API
 
-Enterprise-grade ML model serving microservice built with Spring Boot (Java). Provides REST endpoints for fraud detection model inference with health checks, circuit breakers (Resilience4j), metrics (Micrometer/Prometheus), and containerized deployment.
+ML model serving microservice built with Spring Boot (Java). Provides REST endpoints for fraud detection model inference with health checks, circuit breakers (Resilience4j), metrics (Micrometer/Prometheus), and containerized deployment.
 
 ## Architecture
 
@@ -59,7 +59,7 @@ This project explores Spring Boot as an alternative to FastAPI for ML model serv
 | Monitoring | Micrometer/Actuator | Custom/Prometheus client |
 | Circuit Breakers | Resilience4j (native) | Custom implementation |
 
-**Decision**: FastAPI was chosen for the production ML serving layer due to tighter integration with the Python ML ecosystem (PyTorch, scikit-learn), lower serialization overhead when working with NumPy arrays, and faster iteration during model development.
+**Decision**: FastAPI (see `fastapi-ml-microservice`) was chosen for the primary serving project due to tighter integration with the Python ML ecosystem (PyTorch, scikit-learn), lower serialization overhead when working with NumPy arrays, and faster iteration during model development.
 
 ## Project Structure
 
